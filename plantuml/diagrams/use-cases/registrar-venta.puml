@@ -1,0 +1,45 @@
+@startuml
+!theme cerulean
+
+left to right direction
+skinparam shadowing true
+skinparam usecase {
+    BackgroundColor #F0F8FF
+    BorderColor #2C7A7B
+}
+
+actor "Vendedor" as Vendedor
+actor "Cliente" as Cliente
+actor "SUNAT" as SUNAT <<external>>
+actor "Sistema de Inventario" as Inventario <<external>>
+
+rectangle "Sistema de Ventas" {
+    usecase "Registrar Venta" as CU01
+    usecase "Buscar Producto" as Buscar
+    usecase "Validar Stock" as ValidarStock
+    usecase "Procesar Pago" as ProcesarPago
+    usecase "Generar Comprobante" as GenerarComprobante
+    usecase "Registrar Auditoría" as Auditoria
+}
+
+' Relaciones principales
+Vendedor --> CU01
+Cliente --> CU01
+
+CU01 ..> Buscar : <<include>>
+CU01 ..> ValidarStock : <<include>>
+CU01 ..> ProcesarPago : <<include>>
+CU01 ..> GenerarComprobante : <<include>>
+CU01 ..> Auditoria : <<include>>
+
+ValidarStock --> Inventario
+GenerarComprobante --> SUNAT
+
+note right of CU01
+  <b>CU-01: Registrar Venta</b>
+  • Actor principal: Vendedor
+  • Precondición: Sesión iniciada + Stock disponible
+  • Postcondición: Venta registrada, stock actualizado y comprobante emitido
+end note
+
+@enduml
