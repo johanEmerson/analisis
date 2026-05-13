@@ -1,0 +1,117 @@
+@startuml CU-01_RegistrarVenta
+!theme cerulean
+
+left to right direction
+skinparam shadowing true
+skinparam dpi 300
+skinparam defaultFontSize 13
+
+' ==================== ESTILOS ====================
+skinparam usecase {
+    BackgroundColor #FFF8E1
+    BorderColor #D4AF37
+    BorderThickness 2
+    FontColor #2C3E50
+    FontSize 13
+}
+
+skinparam rectangle {
+    BackgroundColor #FFFDF5
+    BorderColor #D4AF37
+    BorderThickness 2
+    FontColor #7B6000
+    FontStyle bold
+}
+
+skinparam actor {
+    BackgroundColor #F4E4B0
+    BorderColor #B8860B
+    FontColor #2C3E50
+    FontSize 12
+}
+
+skinparam note {
+    BackgroundColor #FFFDE7
+    BorderColor #D4AF37
+    FontColor #2C3E50
+    FontSize 12
+}
+
+skinparam arrow {
+    Color #B8860B
+    FontColor #7B6000
+    FontSize 11
+}
+
+' ==================== ACTORES ====================
+actor "Vendedor" as Vendedor
+actor "Cliente" as Cliente
+actor "SUNAT" as SUNAT <<external>>
+actor "Sistema de Inventario" as Inventario <<external>>
+
+' ==================== SISTEMA ====================
+rectangle "Sistema de Ventas" {
+
+    usecase "CU-01\nRegistrar Venta" as CU01 #FFD54F
+
+    usecase "Buscar\nProducto" as Buscar
+    usecase "Validar\nStock" as ValidarStock
+    usecase "Procesar\nPago" as ProcesarPago
+    usecase "Generar\nComprobante" as GenerarComprobante
+    usecase "Registrar\nAuditoría" as Auditoria
+
+    ' ── Flujos alternativos ──
+    usecase "Notificar stock\ninsuficiente" as AltStock #FFE0B2
+    usecase "Redirigir\nal Login" as AltLogin #FFE0B2
+    usecase "Comprobante\npendiente SUNAT" as AltSUNAT #FFE0B2
+}
+
+' ==================== RELACIONES ACTORES ====================
+Vendedor --> CU01
+Cliente  --> CU01
+
+' ==================== INCLUDE ====================
+CU01 ..> Buscar             : <<include>>
+CU01 ..> ValidarStock       : <<include>>
+CU01 ..> ProcesarPago       : <<include>>
+CU01 ..> GenerarComprobante : <<include>>
+CU01 ..> Auditoria          : <<include>>
+
+' ==================== ACTORES SECUNDARIOS ====================
+ValidarStock       --> Inventario
+GenerarComprobante --> SUNAT
+
+' ==================== EXTEND (flujos alternativos) ====================
+AltStock  ..> ValidarStock       : <<extend>>
+AltLogin  ..> CU01               : <<extend>>
+AltSUNAT  ..> GenerarComprobante : <<extend>>
+
+' ==================== NOTA ====================
+note right of CU01 #FFFDE7
+  <b><size:14>CU-01: Registrar Venta</size></b>
+  ====
+  <b>ID:</b> CU-01  |  <b>Versión:</b> 1.0
+  <b>Actor principal:</b> Vendedor
+  ----
+  <b>Precondiciones:</b>
+  • Sesión iniciada
+  • Cliente registrado o con DNI/RUC
+  • Productos con precio y stock definidos
+  ----
+  <b>Postcondiciones:</b>
+  • Venta en estado "Completada"
+  • Stock decrementado
+  • Log de auditoría generado
+  ----
+  <b>Flujo principal:</b>
+  1. Accede al módulo de ventas
+  2. Registra datos del cliente
+  3. Busca y selecciona productos
+  4. Valida disponibilidad de stock
+  5. Procesa el pago
+  6. Genera el comprobante (SUNAT)
+  7. Registra auditoría
+  8. Muestra comprobante al vendedor
+end note
+
+@enduml

@@ -3,10 +3,32 @@
 
 left to right direction
 skinparam shadowing true
+skinparam dpi 300
+
+' ==================== COLORES DORADOS ====================
 skinparam usecase {
-    BackgroundColor #F0F8FF
-    BorderColor #2C7A7B
+    BackgroundColor #FFF8E1
+    BorderColor #D4AF37
+    FontColor #2C3E50
 }
+
+skinparam rectangle {
+    BackgroundColor #FFF8E1
+    BorderColor #D4AF37
+}
+
+skinparam actor {
+    BackgroundColor #F4E4B0
+    BorderColor #B8860B
+}
+
+skinparam note {
+    BackgroundColor #FFF8E1
+    BorderColor #D4AF37
+    FontColor #2C3E50
+}
+
+' ==================== DIAGRAMA ====================
 
 actor "Vendedor" as Vendedor
 actor "Cliente" as Cliente
@@ -22,7 +44,7 @@ rectangle "Sistema de Ventas" {
     usecase "Registrar Auditoría" as Auditoria
 }
 
-' Relaciones principales
+' Relaciones
 Vendedor --> CU01
 Cliente --> CU01
 
@@ -35,11 +57,22 @@ CU01 ..> Auditoria : <<include>>
 ValidarStock --> Inventario
 GenerarComprobante --> SUNAT
 
-note right of CU01
-  <b>CU-01: Registrar Venta</b>
-  • Actor principal: Vendedor
-  • Precondición: Sesión iniciada + Stock disponible
-  • Postcondición: Venta registrada, stock actualizado y comprobante emitido
+' ==================== NOTA CON ESPECIFICACIÓN ====================
+
+note right of CU01 #FFF8E1
+  <b><size:16>CU-01: Registrar Venta</size></b>
+  ==
+  • **Actor principal:** Vendedor
+  • **Precondición:** Sesión iniciada + Stock disponible
+  • **Postcondición:** Venta registrada, stock actualizado y comprobante emitido
+  ==
+  <b>Flujo principal:</b>
+  1. Accede al módulo de ventas
+  2. Registra datos del cliente
+  3. Busca y selecciona productos
+  4. Valida stock
+  5. Procesa pago
+  6. Genera comprobante
 end note
 
 @enduml
